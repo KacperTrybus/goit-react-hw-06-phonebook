@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const ContactList = ({ contacts, handleContactDelete }) => {
+const ContactList = ({ contacts, handleDeleteContact }) => {
   const renderContacts = () =>
     contacts.map(contact => (
       <li key={contact.id} className="contact">
         {contact.name}: {contact.number}
-        <button type="button" onClick={() => handleContactDelete(contact)}>
+        <button type="button" onClick={() => handleDeleteContact(contact)}>
           Delete
         </button>
       </li>
@@ -22,7 +22,6 @@ const ContactList = ({ contacts, handleContactDelete }) => {
 
 ContactList.propTypes = {
   contacts: PropTypes.array.isRequired,
-  handleContactDelete: PropTypes.func.isRequired,
 };
 
 export default ContactList;

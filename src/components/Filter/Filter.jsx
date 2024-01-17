@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import { setFilter } from 'components/redux/filterSlice';
 
-const Filter = ({ filter, setFilter }) => {
+const Filter = ({ filter }) => {
+  const dispatch = useDispatch();
+  const [localFilter, setLocalFilter] = useState(filter);
+
   const handleFilterChange = e => {
-    setFilter(e.target.value);
+    const filterValue = e.target.value;
+    setLocalFilter(filterValue);
+    dispatch(setFilter(filterValue));
   };
 
   return (
@@ -14,7 +21,7 @@ const Filter = ({ filter, setFilter }) => {
       <input
         id="filterInput"
         type="text"
-        value={filter}
+        value={localFilter}
         onChange={handleFilterChange}
       />
     </div>
@@ -23,7 +30,6 @@ const Filter = ({ filter, setFilter }) => {
 
 Filter.propTypes = {
   filter: PropTypes.string.isRequired,
-  setFilter: PropTypes.func.isRequired,
 };
 
 export default Filter;

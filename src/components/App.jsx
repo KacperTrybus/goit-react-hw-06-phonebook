@@ -1,45 +1,50 @@
-import React, { useState, useEffect } from 'react';
+// import React, { useState, useEffect } from 'react';
 import ContactList from './ContactList/ContactList';
 import Filter from './Filter/Filter';
 import ContactForm from './ContactForm/ContactForm';
 import './app.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact, deleteContact } from './redux/contactsSlice';
+import { setFilter } from './redux/filterSlice';
 
 const App = () => {
-  const [contacts, setContacts] = useState([]);
-  const [filter, setFilter] = useState('');
+  // const [contacts, setContacts] = useState([]);
+  // const [filter, setFilter] = useState('');
+  const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts.contacts || []);
+  const filter = useSelector(state => state.filter || '');
 
-  useEffect(() => {
-    const storedContacts = localStorage.getItem('contacts');
-    if (storedContacts) {
-      setContacts(JSON.parse(storedContacts));
-    }
-  }, []);
+  // useEffect(() => {
+  //   const storedContacts = localStorage.getItem('contacts');
+  //   if (storedContacts) {
+  //     setContacts(JSON.parse(storedContacts));
+  //   }
+  // }, [setContacts]);
 
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
+  // useEffect(() => {
+  //   localStorage.setItem('contacts', JSON.stringify(contacts));
+  // }, [contacts]);
 
   const contactExists = newContact =>
     contacts.some(
       contact => contact.name.toLowerCase() === newContact.name.toLowerCase()
     );
 
-  const addContact = newContact => {
+  const handleAddContact = newContact => {
     if (contactExists(newContact)) {
       alert('Contact already exists');
     } else {
-      setContacts(prevContacts => [...prevContacts, newContact]);
+      dispatch(addContact(newContact));
+      console.log('Updated Contacts:', contacts);
     }
   };
 
-  const handleContactDelete = deletedContact => {
-    setContacts(prevContacts =>
-      prevContacts.filter(contact => contact.id !== deletedContact.id)
-    );
+  const handleDeleteContact = deletedContact => {
+    dispatch(deleteContact(deletedContact.id));
   };
 
   const handleFilterChange = filterValue => {
-    setFilter(filterValue);
+    dispatch(setFilter(filterValue));
   };
 
   const filteredContacts = contacts.filter(contact =>
@@ -49,12 +54,12 @@ const App = () => {
   return (
     <div className="wrapper">
       <h1>Phonebook</h1>
-      <ContactForm addContact={addContact} />
+      <ContactForm addContact={handleAddContact} />
       <h2>Contacts</h2>
-      <Filter filter={filter} setFilter={handleFilterChange} />
+      <Filter filter={contacts} handleFilterChange={handleFilterChange} />
       <ContactList
         contacts={filteredContacts}
-        handleContactDelete={handleContactDelete}
+        handleDeleteContact={handleDeleteContact}
       />
     </div>
   );
