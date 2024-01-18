@@ -10,8 +10,10 @@ const contactsSlice = createSlice({
   initialState: initialState,
   reducers: {
     addContact: (state, action) => {
-      const { id, name, number } = action.payload;
-      state.contacts.push({ id, name, number });
+      const contactsToAdd = Array.isArray(action.payload)
+        ? action.payload
+        : [action.payload];
+      state.contacts = [...state.contacts, ...contactsToAdd];
     },
     deleteContact: (state, action) => {
       const contactIdToDelete = action.payload;

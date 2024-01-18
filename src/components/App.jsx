@@ -1,29 +1,30 @@
-// import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import ContactList from './ContactList/ContactList';
 import Filter from './Filter/Filter';
 import ContactForm from './ContactForm/ContactForm';
 import './app.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact, deleteContact } from './redux/contactsSlice';
-import { setFilter } from './redux/filterSlice';
+import { addContact, deleteContact } from '../redux/contactsSlice';
+import { setFilter } from '../redux/filterSlice';
 
 const App = () => {
-  // const [contacts, setContacts] = useState([]);
-  // const [filter, setFilter] = useState('');
   const dispatch = useDispatch();
   const contacts = useSelector(state => state.contacts.contacts || []);
   const filter = useSelector(state => state.filter || '');
 
-  // useEffect(() => {
-  //   const storedContacts = localStorage.getItem('contacts');
-  //   if (storedContacts) {
-  //     setContacts(JSON.parse(storedContacts));
-  //   }
-  // }, [setContacts]);
+  useEffect(() => {
+    const storedContacts = localStorage.getItem('contacts');
+    console.log('Stored Contacts:', storedContacts);
 
-  // useEffect(() => {
-  //   localStorage.setItem('contacts', JSON.stringify(contacts));
-  // }, [contacts]);
+    if (storedContacts) {
+      const parsedContacts = JSON.parse(storedContacts);
+      dispatch(addContact(parsedContacts));
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
   const contactExists = newContact =>
     contacts.some(
@@ -47,16 +48,16 @@ const App = () => {
     dispatch(setFilter(filterValue));
   };
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(filter.toLowerCase())
+  const filteredContacts = contacts.filter(
+    contact =>
+      contact.name && contact.name.toLowerCase().includes(filter.toLowerCase())
   );
-
   return (
     <div className="wrapper">
       <h1>Phonebook</h1>
       <ContactForm addContact={handleAddContact} />
       <h2>Contacts</h2>
-      <Filter filter={contacts} handleFilterChange={handleFilterChange} />
+      <Filter filter={filter} handleFilterChange={handleFilterChange} />
       <ContactList
         contacts={filteredContacts}
         handleDeleteContact={handleDeleteContact}
